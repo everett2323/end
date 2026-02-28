@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Secure-Net</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --sidebar-color: #2c3e50;
+            --accent-color: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --text-muted: #7f8c8d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .nav-item {
+            padding: 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+        }
+
+        .status-dot.online { background-color: var(--success-color); }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .locked-screen {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .lock-icon { font-size: 60px; margin-bottom: 20px; display: block; }
+
+        .fragment-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            font-family: monospace;
+        }
+
+        .fragment-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .fragment-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--sidebar-color);
+            letter-spacing: 2px;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .log-table th { text-align: left; color: var(--text-muted); padding: 10px; border-bottom: 1px solid #eee; }
+        .log-table td { padding: 10px; border-bottom: 1px solid #f9f9f9; }
+
+        .instruction-footer {
+            margin-top: auto;
+            font-size: 11px;
+            color: #bbb;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Secure-Net</h2>
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">Dashboard</div>
+        <div class="nav-item" onclick="switchTab('logs', this)">Network Logs</div>
+        <div class="nav-item" onclick="switchTab('vault', this)">Security Vault</div>
+        <div class="nav-item" onclick="switchTab('settings', this)">Settings</div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h1 id="pageTitle">Admin Dashboard</h1>
+            <div class="user-badge">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="userRole">Guest Account</span>
+            </div>
+        </div>
+
+        <!-- Global Locked View -->
+        <div id="lockedView" class="card locked-screen">
+            <span class="lock-icon">🔒</span>
+            <h3>ACCESS RESTRICTED</h3>
+            <p>Admin authorization required to view internal system fragments.</p>
+            <p style="color: var(--danger-color); font-size: 13px; font-family: monospace; opacity: 0.6;">
+                [FATAL] GLOBAL_STATE_ERROR: Environment variable 'admin_session' is null or undefined.
+            </p>
+        </div>
+
+        <!-- Authorized Content Area -->
+        <div id="authorizedArea" style="display: none;">
+            
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <div class="card-title">Welcome, Admin</div>
+                    <p>System recovery initiated. Part 1 of the override sequence is displayed below.</p>
+                    <div class="fragment-container">
+                        <span class="fragment-label">Sequence Part 1/4</span>
+                        <span class="fragment-value">Ad</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logs" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Recent Traffic Analysis</div>
+                    <p>Analysis of incoming packets revealed an embedded string in the header.</p>
+                    <div class="fragment-container" style="border-left-color: var(--success-color);">
+                        <span class="fragment-label">Sequence Part 2/4</span>
+                        <span class="fragment-value">min</span>
+                    </div>
+                    <table class="log-table" style="margin-top: 20px;">
+                        <thead><tr><th>Time</th><th>Source</th><th>Event</th></tr></thead>
+                        <tbody><tr><td>14:01</td><td>Internal</td><td>Packet Decoded</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="vault" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Encrypted Storage</div>
+                    <p>Secure memory bank accessed. Decoding next segment...</p>
+                    <div class="fragment-container" style="border-left-color: var(--danger-color);">
+                        <span class="fragment-label">Sequence Part 3/4</span>
+                        <span class="fragment-value">Pass</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings" class="tab-content">
+                <div class="card">
+                    <div class="card-title">System Finalization</div>
+                    <p>All modules verified. Finalizing numeric suffix for current protocol.</p>
+                    <div class="fragment-container" style="border-left-color: #f39c12;">
+                        <span class="fragment-label">Sequence Part 4/4</span>
+                        <span class="fragment-value">2026</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="instruction-footer">
+            System Diagnostics: v4.1.2 - All privilege elevation attempts must be performed via the diagnostic console.
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, element) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            
+            const titles = {
+                'dashboard': 'Admin Dashboard',
+                'logs': 'Network Logs',
+                'vault': 'Security Vault',
+                'settings': 'System Settings'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId];
+        }
+
+        function checkAuth() {
+            // Checks for admin_session = true
+            const isAuthorized = 
+                window.admin_session === true || 
+                localStorage.getItem('admin_session') === 'true' ||
+                document.cookie.includes('admin_session=true');
+
+            const lockedView = document.getElementById('lockedView');
+            const authorizedArea = document.getElementById('authorizedArea');
+            const statusDot = document.getElementById('statusDot');
+            const userRole = document.getElementById('userRole');
+
+            if (isAuthorized) {
+                lockedView.style.display = 'none';
+                authorizedArea.style.display = 'block';
+                statusDot.classList.add('online');
+                userRole.innerText = "Administrator";
+            } else {
+                lockedView.style.display = 'block';
+                authorizedArea.style.display = 'none';
+                statusDot.classList.remove('online');
+                userRole.innerText = "Guest Account";
+            }
+        }
+
+        setInterval(checkAuth, 500);
+
+        console.log("%c [SYS_MONITOR] SECURITY ALERT ", "background: red; color: white; font-weight: bold; padding: 2px 5px;");
+        console.warn("Privilege level: GUEST. Administrative boolean 'admin_session' not found in global scope.");
+        console.info("Diagnostic: Set global administrative toggle to 'true' to restore navigation.");
+    </script>
+</body>
+</html>
