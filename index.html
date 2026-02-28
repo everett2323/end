@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITICAL SYSTEM OVERRIDE</title>
+    <style>
+        :root {
+            /* CLUE PART 1: VORTEX */
+            --access-prefix: "VORTEX";
+            --primary-red: #ff3e3e;
+            --bg-dark: #050505;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .terminal {
+            width: 600px;
+            padding: 30px;
+            border: 1px solid #333;
+            background: #111;
+            box-shadow: 0 0 40px rgba(255, 62, 62, 0.1);
+            position: relative;
+        }
+
+        .header {
+            color: var(--primary-red);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .status-line {
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .status-label { color: #888; }
+        .status-value { color: #fff; }
+
+        .input-zone {
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #444;
+            padding: 12px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 18px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* CLUE: The button is hidden via opacity. 
+           Players must find it in the Inspector and change opacity to 1. */
+        #overrideBtn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0; /* HIDDEN */
+            transition: opacity 0.3s;
+        }
+
+        #overrideBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        .instruction-box {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #444;
+            border-left: 2px solid #222;
+            padding-left: 10px;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* CLUE PART 2: 7741 is hidden in a data-attribute of the logo */
+        .logo-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal">
+        <div class="logo-icon" data-segment-two="7741">⌬</div>
+        <div class="header">Kernel Security v4.0</div>
+        
+        <div class="status-line">
+            <span class="status-label">SYSTEM_STATE:</span>
+            <span class="status-value" id="stateValue" style="color: var(--primary-red);">LOCKED</span>
+        </div>
+        <div class="status-line">
+            <span class="status-label">ENCRYPTION:</span>
+            <span class="status-value">AES-256-GCM</span>
+        </div>
+        <div class="status-line">
+            <span class="status-label">LAST_ATTEMPT:</span>
+            <span class="status-value" id="lastAttempt">UNAUTHORIZED</span>
+        </div>
+
+        <div class="input-zone">
+            <label>ENTER 3-PART MASTER KEY (FORMAT: XXXXX-XXXX-XXXX)</label>
+            <input type="text" id="masterKey" placeholder="----" autocomplete="off">
+            <button id="overrideBtn" onclick="attemptOverride()">INITIATE OVERRIDE</button>
+        </div>
+
+        <div id="feedback"></div>
+
+        <div class="instruction-box">
+            MANUAL: In the event of console failure, use internal diagnostics. <br>
+            Execute <code>system.diagnostics(level)</code> to verify Module 3.
+        </div>
+    </div>
+
+    <script>
+        // --- FINAL ROOM LOGIC ---
+
+        // CLUE PART 3: The user must call this in console: system.diagnostics(9)
+        window.system = {
+            diagnostics: function(level) {
+                if (level === 9) {
+                    console.log("%c [DIAGNOSTIC SUCCESS] ", "background: #004400; color: #00ff00;");
+                    console.log("Module 3 Signature: 'ZERO'");
+                    return "Final segment verified.";
+                } else {
+                    console.warn("Insufficient access level for Module 3 verification.");
+                    return "Access Denied.";
+                }
+            }
+        };
+
+        // Added event listener for Enter key to make it more user-friendly
+        document.getElementById('masterKey').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                attemptOverride();
+            }
+        });
+
+        function attemptOverride() {
+            // Added .trim() to ensure trailing/leading spaces don't break the match
+            const input = document.getElementById('masterKey').value.trim().toUpperCase();
+            const feedback = document.getElementById('feedback');
+            
+            // Expected Key: VORTEX-7741-ZERO
+            // Part 1: CSS variable '--access-prefix' -> VORTEX
+            // Part 2: Data attribute 'data-segment-two' -> 7741
+            // Part 3: Result of system.diagnostics(9) -> ZERO
+            
+            const expected = "VORTEX-7741-ZERO";
+
+            feedback.style.display = 'block';
+
+            if (input === expected) {
+                feedback.style.backgroundColor = "rgba(0, 255, 0, 0.1)";
+                feedback.style.color = "#0f0";
+                feedback.style.border = "1px solid #0f0";
+                feedback.innerHTML = "<strong>CRITICAL SUCCESS</strong><br>Vault Door Unlocked. Final Code: ESC_2024_WIN";
+                
+                document.getElementById('stateValue').innerText = "OPEN";
+                document.getElementById('stateValue').style.color = "#0f0";
+                document.getElementById('lastAttempt').innerText = "SUCCESS";
+                console.log("%c [ACCESS GRANTED] Terminal session authorized. ", "color: #00ff00; font-weight: bold;");
+            } else {
+                feedback.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
+                feedback.style.color = "#f00";
+                feedback.style.border = "1px solid #f00";
+                feedback.innerText = "INVALID KEY SEQUENCE. INTERNAL AUDIT TRIGGERED.";
+                
+                // Detailed error for developers/players checking console
+                console.error("Mismatch detected in key segments. Verification failed.");
+                
+                // Subtle hint logic for the escape room
+                const segments = input.split('-');
+                if (segments.length === 3) {
+                    if (segments[0] === "VORTEX") console.info("Segment 1: VALID");
+                    if (segments[1] === "7741") console.info("Segment 2: VALID");
+                    if (segments[2] === "ZERO") console.info("Segment 3: VALID");
+                }
+            }
+        }
+
+        // Hidden logs to distract/hint
+        window.onload = function() {
+            console.log("Kernel sequence initialized...");
+            console.log("Searching for CSS variables...");
+            console.log("Warning: UI elements may be out of phase (Opacity < 1.0)");
+        };
+    </script>
+</body>
+</html>
