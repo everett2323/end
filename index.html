@@ -3,230 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRITICAL SYSTEM OVERRIDE</title>
+    <title>Extraction Gateway | Secure</title>
     <style>
-        :root {
-            /* CLUE PART 1: VORTEX */
-            --access-prefix: "VORTEX";
-            --primary-red: #ff3e3e;
-            --bg-dark: #050505;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: #ffffff;
+            background-color: #f4f7f6;
+            color: #2c3e50;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            flex-direction: column;
         }
 
-        .terminal {
-            width: 600px;
-            padding: 30px;
-            border: 1px solid #333;
-            background: #111;
-            box-shadow: 0 0 40px rgba(255, 62, 62, 0.1);
-            position: relative;
+        .gateway-card {
+            background: white;
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border-top: 5px solid #27ae60;
         }
 
-        .header {
-            color: var(--primary-red);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        h1 {
+            margin-top: 0;
+            font-size: 28px;
+            color: #2c3e50;
+            letter-spacing: -0.5px;
+        }
+
+        p.description {
+            color: #7f8c8d;
+            font-size: 15px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .input-section {
+            text-align: left;
             margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .status-line {
-            font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .status-label { color: #888; }
-        .status-value { color: #fff; }
-
-        .input-zone {
-            margin-top: 30px;
         }
 
         label {
             display: block;
+            font-weight: bold;
             font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
+            text-transform: uppercase;
+            color: #95a5a6;
+            margin-bottom: 8px;
         }
 
         input {
             width: 100%;
-            background: #000;
-            border: 1px solid #444;
-            padding: 12px;
-            color: #0f0;
-            font-family: monospace;
-            font-size: 18px;
-            outline: none;
+            padding: 14px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
+            font-family: monospace;
         }
 
-        /* CLUE: The button is hidden via opacity. 
-           Players must find it in the Inspector and change opacity to 1. */
-        #overrideBtn {
-            margin-top: 20px;
+        input:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        button {
             width: 100%;
             padding: 15px;
-            background-color: var(--primary-red);
+            background-color: #27ae60;
             color: white;
             border: none;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            opacity: 0; /* HIDDEN */
-            transition: opacity 0.3s;
+            margin-top: 10px;
+            transition: transform 0.1s, background-color 0.2s;
         }
 
-        #overrideBtn:hover {
-            background-color: #d32f2f;
+        button:active {
+            transform: scale(0.98);
         }
 
-        .instruction-box {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #444;
-            border-left: 2px solid #222;
-            padding-left: 10px;
+        button:hover {
+            background-color: #2ecc71;
         }
 
-        #feedback {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
+        #result-area {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
             display: none;
-            font-size: 14px;
-            text-align: center;
         }
 
-        /* CLUE PART 2: 7741 is hidden in a data-attribute of the logo */
-        .logo-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            opacity: 0.2;
+        .error {
+            background-color: #fdeaea;
+            color: #c0392b;
+            border: 1px solid #f5b7b1;
+        }
+
+        .success {
+            background-color: #eafaf1;
+            color: #27ae60;
+            border: 2px dashed #27ae60;
+        }
+
+        .victory-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .victory-link:hover {
+            background: #219150;
+        }
+
+        .lock-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="terminal">
-        <div class="logo-icon" data-segment-two="7741">⌬</div>
-        <div class="header">Kernel Security v4.0</div>
+    <div class="gateway-card">
+        <div class="lock-icon">🔒</div>
+        <h1>Data Extraction Point</h1>
+        <p class="description">Combine the evidence gathered from the Mainframe Terminal and the Internal Memo to authorize extraction.</p>
         
-        <div class="status-line">
-            <span class="status-label">SYSTEM_STATE:</span>
-            <span class="status-value" id="stateValue" style="color: var(--primary-red);">LOCKED</span>
-        </div>
-        <div class="status-line">
-            <span class="status-label">ENCRYPTION:</span>
-            <span class="status-value">AES-256-GCM</span>
-        </div>
-        <div class="status-line">
-            <span class="status-label">LAST_ATTEMPT:</span>
-            <span class="status-value" id="lastAttempt">UNAUTHORIZED</span>
+        <div class="input-section">
+            <label for="terminalCode">Terminal Access Key</label>
+            <input type="text" id="terminalCode" placeholder="Enter Terminal Key..." autocomplete="off">
         </div>
 
-        <div class="input-zone">
-            <label>ENTER 3-PART MASTER KEY (FORMAT: XXXXX-XXXX-XXXX)</label>
-            <input type="text" id="masterKey" placeholder="----" autocomplete="off">
-            <button id="overrideBtn" onclick="attemptOverride()">INITIATE OVERRIDE</button>
+        <div class="input-section">
+            <label for="memoCode">Secret Directory Path</label>
+            <input type="text" id="memoCode" placeholder="Enter Directory Path..." autocomplete="off">
         </div>
 
-        <div id="feedback"></div>
+        <button onclick="verifyExtraction()">Verify Authorization</button>
 
-        <div class="instruction-box">
-            MANUAL: In the event of console failure, use internal diagnostics. <br>
-            Execute <code>system.diagnostics(level)</code> to verify Module 3.
-        </div>
+        <div id="result-area"></div>
     </div>
 
     <script>
-        // --- FINAL ROOM LOGIC ---
+        function verifyExtraction() {
+            const termInput = document.getElementById('terminalCode').value.trim();
+            const memoInput = document.getElementById('memoCode').value.trim();
+            const result = document.getElementById('result-area');
 
-        // CLUE PART 3: The user must call this in console: system.diagnostics(9)
-        window.system = {
-            diagnostics: function(level) {
-                if (level === 9) {
-                    console.log("%c [DIAGNOSTIC SUCCESS] ", "background: #004400; color: #00ff00;");
-                    console.log("Module 3 Signature: 'ZERO'");
-                    return "Final segment verified.";
-                } else {
-                    console.warn("Insufficient access level for Module 3 verification.");
-                    return "Access Denied.";
-                }
-            }
-        };
-
-        // Added event listener for Enter key to make it more user-friendly
-        document.getElementById('masterKey').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                attemptOverride();
-            }
-        });
-
-        function attemptOverride() {
-            // Added .trim() to ensure trailing/leading spaces don't break the match
-            const input = document.getElementById('masterKey').value.trim().toUpperCase();
-            const feedback = document.getElementById('feedback');
+            // Logic:
+            // Terminal Code: QUANTUM_FLUX_882
+            // Memo Code: everett2323/go
             
-            // Expected Key: VORTEX-7741-ZERO
-            // Part 1: CSS variable '--access-prefix' -> VORTEX
-            // Part 2: Data attribute 'data-segment-two' -> 7741
-            // Part 3: Result of system.diagnostics(9) -> ZERO
-            
-            const expected = "VORTEX-7741-ZERO";
+            const isTermValid = termInput === "QUANTUM_FLUX_882";
+            const isMemoValid = memoInput === "everett2323/go";
 
-            feedback.style.display = 'block';
+            result.style.display = 'block';
 
-            if (input === expected) {
-                feedback.style.backgroundColor = "rgba(0, 255, 0, 0.1)";
-                feedback.style.color = "#0f0";
-                feedback.style.border = "1px solid #0f0";
-                feedback.innerHTML = "<strong>CRITICAL SUCCESS</strong><br>Vault Door Unlocked. Final Code: ESC_2024_WIN";
-                
-                document.getElementById('stateValue').innerText = "OPEN";
-                document.getElementById('stateValue').style.color = "#0f0";
-                document.getElementById('lastAttempt').innerText = "SUCCESS";
-                console.log("%c [ACCESS GRANTED] Terminal session authorized. ", "color: #00ff00; font-weight: bold;");
+            if (isTermValid && isMemoValid) {
+                result.className = 'success';
+                result.innerHTML = `
+                    <strong>AUTHORIZATION COMPLETE</strong><br>
+                    All protocols verified. You have successfully bypassed the security grid.<br>
+                    <a href="https://example.com/victory" class="victory-link">INITIATE EXTRACTION</a>
+                `;
+                document.querySelector('.lock-icon').innerText = "🔓";
             } else {
-                feedback.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
-                feedback.style.color = "#f00";
-                feedback.style.border = "1px solid #f00";
-                feedback.innerText = "INVALID KEY SEQUENCE. INTERNAL AUDIT TRIGGERED.";
+                result.className = 'error';
+                let errorMsg = "<strong>ACCESS DENIED</strong><br>";
                 
-                // Detailed error for developers/players checking console
-                console.error("Mismatch detected in key segments. Verification failed.");
-                
-                // Subtle hint logic for the escape room
-                const segments = input.split('-');
-                if (segments.length === 3) {
-                    if (segments[0] === "VORTEX") console.info("Segment 1: VALID");
-                    if (segments[1] === "7741") console.info("Segment 2: VALID");
-                    if (segments[2] === "ZERO") console.info("Segment 3: VALID");
+                if (!isTermValid && !isMemoValid) {
+                    errorMsg += "Both security segments are invalid.";
+                } else if (!isTermValid) {
+                    errorMsg += "Terminal Access Key rejected.";
+                } else {
+                    errorMsg += "Secret Directory Path rejected.";
                 }
+                
+                result.innerHTML = errorMsg;
+                document.querySelector('.lock-icon').innerText = "🔒";
             }
         }
-
-        // Hidden logs to distract/hint
-        window.onload = function() {
-            console.log("Kernel sequence initialized...");
-            console.log("Searching for CSS variables...");
-            console.log("Warning: UI elements may be out of phase (Opacity < 1.0)");
-        };
     </script>
 </body>
 </html>
