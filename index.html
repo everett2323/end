@@ -36,31 +36,31 @@
 
         p.description {
             color: #7f8c8d;
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 25px;
             line-height: 1.5;
         }
 
         .input-section {
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             color: #95a5a6;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         input {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #ecf0f1;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             box-sizing: border-box;
             transition: border-color 0.3s;
             font-family: monospace;
@@ -95,9 +95,10 @@
 
         #result-area {
             margin-top: 25px;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             display: none;
+            font-size: 14px;
         }
 
         .error {
@@ -124,14 +125,13 @@
         }
 
         .lock-icon {
-            font-size: 50px;
-            margin-bottom: 15px;
+            font-size: 40px;
+            margin-bottom: 10px;
         }
 
-        /* Navigation Buttons at the bottom */
         .nav-footer {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 15px;
             border-top: 1px solid #eee;
             display: flex;
             gap: 10px;
@@ -139,12 +139,12 @@
 
         .nav-btn {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             background-color: #34495e;
             color: white;
             border: none;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
@@ -155,8 +155,8 @@
             opacity: 0.9;
         }
 
-        .nav-btn.kernel {
-            background-color: #c0392b;
+        .nav-btn.alt {
+            background-color: #8e44ad;
         }
     </style>
 </head>
@@ -165,26 +165,31 @@
     <div class="gateway-card">
         <div class="lock-icon">🔒</div>
         <h1>Data Extraction Point</h1>
-        <p class="description">Combine the access keys from the Mainframe Terminal and the Kernel Vault to authorize extraction.</p>
+        <p class="description">Identity verification required. Enter the three authorization sequences to bypass the final security layer.</p>
         
         <div class="input-section">
             <label for="terminalCode">Terminal Access Key</label>
-            <input type="text" id="terminalCode" placeholder="Enter Terminal Key..." autocomplete="off">
+            <input type="text" id="terminalCode" placeholder="Enter key..." autocomplete="off">
         </div>
 
         <div class="input-section">
             <label for="kernelCode">Kernel Master Key</label>
-            <input type="text" id="kernelCode" placeholder="Enter Kernel Key..." autocomplete="off">
+            <input type="text" id="kernelCode" placeholder="Enter key..." autocomplete="off">
+        </div>
+
+        <div class="input-section">
+            <label for="adminCode">Admin Credentials</label>
+            <input type="text" id="adminCode" placeholder="Enter key..." autocomplete="off">
         </div>
 
         <button class="verify-btn" onclick="verifyExtraction()">Verify Authorization</button>
 
         <div id="result-area"></div>
 
-        <!-- New Navigation Buttons -->
         <div class="nav-footer">
-            <button class="nav-btn" onclick="window.location.href='terminal.html'">Back to Terminal</button>
-            <button class="nav-btn kernel" onclick="window.location.href='kernal.html'">Back to Kernel</button>
+            <button class="nav-btn" onclick="window.location.href='terminal_room.html'">Terminal</button>
+            <button class="nav-btn" onclick="window.location.href='final_vault.html'">Kernel</button>
+            <button class="nav-btn alt" onclick="window.location.href='cookie_vault.html'">Vault</button>
         </div>
     </div>
 
@@ -192,38 +197,38 @@
         function verifyExtraction() {
             const termInput = document.getElementById('terminalCode').value.trim();
             const kernelInput = document.getElementById('kernelCode').value.trim().toUpperCase();
+            const adminInput = document.getElementById('adminCode').value.trim();
             const result = document.getElementById('result-area');
 
-            // Logic:
-            // Terminal Code: QUANTUM_FLUX_882
-            // Kernel Code: VORTEX-7741-ZERO
-            
+            // Internal Answer Key
             const isTermValid = termInput === "QUANTUM_FLUX_882";
             const isKernelValid = kernelInput === "VORTEX-7741-ZERO";
+            const isAdminValid = adminInput === "AdminPass2026";
 
             result.style.display = 'block';
 
-            if (isTermValid && isKernelValid) {
+            if (isTermValid && isKernelValid && isAdminValid) {
                 result.className = 'success';
                 result.innerHTML = `
-                    <strong>AUTHORIZATION COMPLETE</strong><br>
-                    All protocols verified. You have successfully bypassed the security grid.<br>
-                    <a href="win.html" class="victory-link">INITIATE EXTRACTION</a>
+                    <strong>AUTHORIZATION SUCCESSFUL</strong><br>
+                    Extraction protocols initiated.<br>
+                    <a href="victory.html" class="victory-link">INITIATE DOWNLOAD</a>
                 `;
                 document.querySelector('.lock-icon').innerText = "🔓";
             } else {
                 result.className = 'error';
-                let errorMsg = "<strong>ACCESS DENIED</strong><br>";
                 
-                if (!isTermValid && !isKernelValid) {
-                    errorMsg += "Both security segments are invalid.";
-                } else if (!isTermValid) {
-                    errorMsg += "Terminal Access Key rejected.";
-                } else {
-                    errorMsg += "Kernel Master Key rejected.";
-                }
-                
-                result.innerHTML = errorMsg;
+                // Identify incorrect inputs
+                let errorDetails = [];
+                if (!isTermValid) errorDetails.push("Terminal Access Key");
+                if (!isKernelValid) errorDetails.push("Kernel Master Key");
+                if (!isAdminValid) errorDetails.push("Admin Credentials");
+
+                result.innerHTML = `
+                    <strong>ACCESS DENIED</strong><br>
+                    The following sequences are incorrect:<br>
+                    <span style="font-size: 12px;">• ${errorDetails.join('<br>• ')}</span>
+                `;
                 document.querySelector('.lock-icon').innerText = "🔒";
             }
         }
