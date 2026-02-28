@@ -18,7 +18,7 @@
 
         .gateway-card {
             background: white;
-            padding: 50px;
+            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
@@ -37,7 +37,7 @@
         p.description {
             color: #7f8c8d;
             font-size: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             line-height: 1.5;
         }
 
@@ -71,7 +71,7 @@
             border-color: #27ae60;
         }
 
-        button {
+        .verify-btn {
             width: 100%;
             padding: 15px;
             background-color: #27ae60;
@@ -85,16 +85,16 @@
             transition: transform 0.1s, background-color 0.2s;
         }
 
-        button:active {
+        .verify-btn:active {
             transform: scale(0.98);
         }
 
-        button:hover {
+        .verify-btn:hover {
             background-color: #2ecc71;
         }
 
         #result-area {
-            margin-top: 30px;
+            margin-top: 25px;
             padding: 20px;
             border-radius: 8px;
             display: none;
@@ -123,13 +123,40 @@
             font-weight: bold;
         }
 
-        .victory-link:hover {
-            background: #219150;
-        }
-
         .lock-icon {
             font-size: 50px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Navigation Buttons at the bottom */
+        .nav-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.9;
+        }
+
+        .nav-btn.kernel {
+            background-color: #c0392b;
         }
     </style>
 </head>
@@ -138,7 +165,7 @@
     <div class="gateway-card">
         <div class="lock-icon">🔒</div>
         <h1>Data Extraction Point</h1>
-        <p class="description">Combine the evidence gathered from the Mainframe Terminal and the Internal Memo to authorize extraction.</p>
+        <p class="description">Combine the access keys from the Mainframe Terminal and the Kernel Vault to authorize extraction.</p>
         
         <div class="input-section">
             <label for="terminalCode">Terminal Access Key</label>
@@ -146,31 +173,37 @@
         </div>
 
         <div class="input-section">
-            <label for="memoCode">Secret Directory Path</label>
-            <input type="text" id="memoCode" placeholder="Enter Directory Path..." autocomplete="off">
+            <label for="kernelCode">Kernel Master Key</label>
+            <input type="text" id="kernelCode" placeholder="Enter Kernel Key..." autocomplete="off">
         </div>
 
-        <button onclick="verifyExtraction()">Verify Authorization</button>
+        <button class="verify-btn" onclick="verifyExtraction()">Verify Authorization</button>
 
         <div id="result-area"></div>
+
+        <!-- New Navigation Buttons -->
+        <div class="nav-footer">
+            <button class="nav-btn" onclick="window.location.href='terminal.html'">Back to Terminal</button>
+            <button class="nav-btn kernel" onclick="window.location.href='kernal.html'">Back to Kernel</button>
+        </div>
     </div>
 
     <script>
         function verifyExtraction() {
             const termInput = document.getElementById('terminalCode').value.trim();
-            const memoInput = document.getElementById('memoCode').value.trim();
+            const kernelInput = document.getElementById('kernelCode').value.trim().toUpperCase();
             const result = document.getElementById('result-area');
 
             // Logic:
             // Terminal Code: QUANTUM_FLUX_882
-            // Memo Code: everett2323/go
+            // Kernel Code: VORTEX-7741-ZERO
             
             const isTermValid = termInput === "QUANTUM_FLUX_882";
-            const isMemoValid = memoInput === "everett2323/go";
+            const isKernelValid = kernelInput === "VORTEX-7741-ZERO";
 
             result.style.display = 'block';
 
-            if (isTermValid && isMemoValid) {
+            if (isTermValid && isKernelValid) {
                 result.className = 'success';
                 result.innerHTML = `
                     <strong>AUTHORIZATION COMPLETE</strong><br>
@@ -182,12 +215,12 @@
                 result.className = 'error';
                 let errorMsg = "<strong>ACCESS DENIED</strong><br>";
                 
-                if (!isTermValid && !isMemoValid) {
+                if (!isTermValid && !isKernelValid) {
                     errorMsg += "Both security segments are invalid.";
                 } else if (!isTermValid) {
                     errorMsg += "Terminal Access Key rejected.";
                 } else {
-                    errorMsg += "Secret Directory Path rejected.";
+                    errorMsg += "Kernel Master Key rejected.";
                 }
                 
                 result.innerHTML = errorMsg;
